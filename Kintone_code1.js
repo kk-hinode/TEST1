@@ -110,11 +110,9 @@
   // ⑤ 新規レコードの保存実行前イベント
   bst.event.on("bst.create.submit", function (event) {
 
-    console.log("保存実行前イベントが発生しました");
-    console.log("送信イベント情報：", event);
+    console.log("保存イベントを検知しました");
 
-    // テストのため、保存をキャンセルする
-    event.error = true;
+    console.log("イベント情報：", event);
 
     return event;
   });

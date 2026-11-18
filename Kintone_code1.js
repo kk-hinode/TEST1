@@ -2,30 +2,27 @@
 (function () {
   "use strict";
 
-  // 商品コード照合1の変更イベントを検知
   bst.event.on(
-    "bst.change.商品コード照合1",
+    "bst.change.商品コード1",
     function (event) {
 
       console.log(
-        "照合欄の変更イベントを検知しました"
+        "入力欄の変更イベントが発生しました"
       );
 
       console.log(
-        "変更後の照合値：",
-        event.record["商品コード照合1"].value
+        "商品コード1：",
+        event.record["商品コード1"].value
       );
 
-      // テスト用メッセージを設定
-      event.record["照合エラー表示"].value =
-        "テスト：商品コード照合1の変更を検知しました。";
+      console.log(
+        "商品コード照合1：",
+        event.record["商品コード照合1"].value
+      );
 
       return event;
     }
   );
-
-})();
-
 
 })();
 

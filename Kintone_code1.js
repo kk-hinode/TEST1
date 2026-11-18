@@ -107,25 +107,16 @@
     );
 
   });
-  // ⑤ イベント発生状況の確認
-
-  // 新規登録画面の表示イベント
-  bst.event.on("bst.create.load", function (event) {
-    console.log("① 新規登録画面の表示イベント");
-    return event;
-  });
-
-  // 保存実行前イベント
+  // ⑤ 新規レコードの保存実行前イベント
   bst.event.on("bst.create.submit", function (event) {
-    console.log("② 保存実行前イベント");
-    console.log("イベント情報：", event);
-    return event;
-  });
 
-  // 保存成功後イベント
-  bst.event.on("bst.create.submit.success", function (event) {
-    console.log("③ 保存成功後イベント");
-    console.log("イベント情報：", event);
+    console.log("保存イベントを検知しました");
+
+    // テストのため保存をキャンセル
+    event.error = true;
+
+    console.log("保存キャンセルを指定しました");
+
     return event;
   });
 })();

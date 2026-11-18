@@ -1,31 +1,16 @@
-(function(){
 
-  var events = [
-    'app.record.edit.change.入力値',
-    'app.record.edit.change.上限値',
-    'app.record.edit.change.下限値',
-    'app.record.create.change.入力値',
-    'app.record.create.change.上限値',
-    'app.record.create.change.下限値'
-  ];
+(function () {
+  "use strict";
 
-  kintone.events.on(events, function(event) {
-    var rec = event.record;
+  bst.event.on("bst.change.商品コード1", function (event) {
 
-    var input = Number(rec.入力値.value);
-    var upper = Number(rec.上限値.value);
-    var lower = Number(rec.下限値.value);
+    console.log("商品コード1の変更イベントが発生しました");
 
-    if (isNaN(input) || isNaN(upper) || isNaN(lower)) {
-      rec.結果値.value = null;
-      return event;
-    }
+    console.log("入力値：", event.record.商品コード1.value);
+    console.log("照合値：", event.record.商品コード照合1.value);
 
-    if (input > upper || input < lower) {
-      rec.結果値.value = 0;
-    } else {
-      rec.結果値.value = input;
-    }
+    console.log("イベント情報：", event);
+    console.log("入力画面のDOM：", event.container);
 
     return event;
   });

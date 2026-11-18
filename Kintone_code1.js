@@ -1,20 +1,41 @@
+
 (function () {
   "use strict";
 
-  bst.event.on("bst.change.商品コード1", function (event) {
+  // ① 照合するフィールドの組み合わせ
+  var fieldPairs = [
+    {
+      input: "商品コード1",
+      check: "商品コード照合1"
+    },
+    {
+      input: "商品コード2",
+      check: "商品コード照合2"
+    },
+    {
+      input: "商品コード3",
+      check: "商品コード照合3"
+    }
+  ];
 
-    // 入力値と照合値を取得
+
+  // ② 1組のフィールドを照合する共通処理
+  function checkField(event, pair) {
+
+    // 入力値を取得
     var inputValue = String(
-      event.record.商品コード1.value ?? ""
+      event.record[pair.input].value ?? ""
     ).trim();
 
+    // 照合値を取得
     var checkValue = String(
-      event.record.商品コード照合1.value ?? ""
+      event.record[pair.check].value ?? ""
     ).trim();
+
 
     // 入力欄のDOM要素を取得
     var field = event.container.querySelector(
-      '[field-id="商品コード1"]'
+      '[field-id="' + pair.input + '"]'
     );
 
     var input = field
@@ -22,18 +43,20 @@
       : null;
 
     if (!input) {
-      return event;
+      return;
     }
 
-    // 照合欄が空欄なら通常表示
+
+    // 照合欄が空欄なら対象外
     if (checkValue === "") {
 
       input.style.removeProperty("background-color");
 
-      return event;
+      return;
     }
 
-    // 一致・不一致を判定
+
+    // 入力値と照合値を比較
     if (inputValue === checkValue) {
 
       // 一致：背景色を解除
@@ -41,7 +64,7 @@
 
     } else {
 
-      // 不一致：背景色を薄い赤色にする
+      // 不一致：背景色を赤色にする
       input.style.setProperty(
         "background-color",
         "#ffcccc",
@@ -49,8 +72,22 @@
       );
 
     }
+  }
 
-    return event;
+
+  // ③ 各入力欄の変更イベントを登録
+  fieldPairs.forEach(function (pair) {
+
+    bst.event.on(
+      "bst.change." + pair.input,
+      function (event) {
+
+        checkField(event, pair);
+
+        return event;
+      }
+    );
+
   });
 
 })();

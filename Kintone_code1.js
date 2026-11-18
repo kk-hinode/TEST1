@@ -3,46 +3,41 @@
 
   bst.event.on("bst.change.商品コード1", function (event) {
 
-    // 入力値と照合値を取得
-    var inputValue = String(
-      event.record.商品コード1.value ?? ""
-    ).trim();
-
-    var checkValue = String(
-      event.record.商品コード照合1.value ?? ""
-    ).trim();
-
-    // 入力欄のDOM要素を取得
+    // 商品コード1のフィールドを取得
     var field = event.container.querySelector(
       '[field-id="商品コード1"]'
     );
 
+    // input要素を取得
     var input = field
       ? field.querySelector("input")
       : null;
 
+    console.log("フィールド取得：", field);
+    console.log("入力欄取得：", input);
+
     if (!input) {
+      console.log("入力欄を取得できませんでした");
       return event;
     }
 
-    // 照合欄が空欄なら通常表示
-    if (checkValue === "") {
-      input.style.backgroundColor = "";
-      return event;
-    }
+    // 背景色を強制的に指定
+    input.style.setProperty(
+      "background-color",
+      "#ffcccc",
+      "important"
+    );
 
-    // 一致・不一致を判定
-    if (inputValue === checkValue) {
+    // 指定後の状態を確認
+    console.log(
+      "インライン背景色：",
+      input.style.backgroundColor
+    );
 
-      // 一致：通常表示
-      input.style.backgroundColor = "";
-
-    } else {
-
-      // 不一致：薄い赤色
-      input.style.backgroundColor = "#ffcccc";
-
-    }
+    console.log(
+      "実際に適用されている背景色：",
+      window.getComputedStyle(input).backgroundColor
+    );
 
     return event;
   });

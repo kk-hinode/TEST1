@@ -4,27 +4,17 @@
 
   bst.event.on("bst.change.商品コード1", function (event) {
 
-    console.log("商品コード1の変更イベント");
+    var elements = event.container.querySelectorAll("input");
 
-    // 入力画面内の入力要素を取得
-    var elements = event.container.querySelectorAll(
-      "input, textarea, select"
-    );
+    elements.forEach(function (el, index) {
 
-    // 各入力要素の情報を一覧表示
-    var elementInfo = Array.from(elements).map(function (el, index) {
-      return {
-        番号: index,
-        種類: el.tagName,
-        ID: el.id,
-        Name: el.name,
-        Class: el.className,
-        Value: el.value,
-        HTML: el.outerHTML
-      };
+      if (el.value === "320119") {
+        console.log("番号：" + index);
+        console.log("親要素：", el.parentElement);
+        console.log("2階層上：", el.parentElement.parentElement);
+      }
+
     });
-
-    console.table(elementInfo);
 
     return event;
   });

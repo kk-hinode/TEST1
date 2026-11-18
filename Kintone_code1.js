@@ -4,13 +4,27 @@
 
   bst.event.on("bst.change.商品コード1", function (event) {
 
-    console.log("商品コード1の変更イベントが発生しました");
+    console.log("商品コード1の変更イベント");
 
-    console.log("入力値：", event.record.商品コード1.value);
-    console.log("照合値：", event.record.商品コード照合1.value);
+    // 入力画面内の入力要素を取得
+    var elements = event.container.querySelectorAll(
+      "input, textarea, select"
+    );
 
-    console.log("イベント情報：", event);
-    console.log("入力画面のDOM：", event.container);
+    // 各入力要素の情報を一覧表示
+    var elementInfo = Array.from(elements).map(function (el, index) {
+      return {
+        番号: index,
+        種類: el.tagName,
+        ID: el.id,
+        Name: el.name,
+        Class: el.className,
+        Value: el.value,
+        HTML: el.outerHTML
+      };
+    });
+
+    console.table(elementInfo);
 
     return event;
   });

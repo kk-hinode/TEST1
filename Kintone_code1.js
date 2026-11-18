@@ -1,20 +1,24 @@
-
 (function () {
   "use strict";
 
   bst.event.on("bst.change.商品コード1", function (event) {
 
-    var elements = event.container.querySelectorAll("input");
+    // 商品コード1のフィールドを取得
+    var field = event.container.querySelector(
+      '[field-id="商品コード1"]'
+    );
 
-    elements.forEach(function (el, index) {
+    // フィールド内の入力要素を取得
+    var input = field
+      ? field.querySelector("input")
+      : null;
 
-      if (el.value === "320119") {
-        console.log("番号：" + index);
-        console.log("親要素：", el.parentElement);
-        console.log("2階層上：", el.parentElement.parentElement);
-      }
+    console.log("入力欄のフィールド：", field);
+    console.log("入力欄のinput要素：", input);
 
-    });
+    if (input) {
+      console.log("入力欄の現在値：", input.value);
+    }
 
     return event;
   });

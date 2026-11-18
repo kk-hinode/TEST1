@@ -19,15 +19,18 @@
   ];
 
 
-  // ② 1組のフィールドを照合する共通処理
+  // ② 不一致フィールドを格納する配列
+  var mismatchFields = [];
+
+
+  // ③ 1組のフィールドを照合する共通処理
   function checkField(event, pair) {
 
-    // 入力値を取得
+    // 入力値と照合値を取得
     var inputValue = String(
       event.record[pair.input].value ?? ""
     ).trim();
 
-    // 照合値を取得
     var checkValue = String(
       event.record[pair.check].value ?? ""
     ).trim();
@@ -71,18 +74,33 @@
         "important"
       );
 
+      // 不一致フィールドを記録
+      mismatchFields.push(pair.input);
+
     }
   }
 
 
-  // ③ 各入力欄の変更イベントを登録
+  // ④ 各入力欄の変更イベントを登録
   fieldPairs.forEach(function (pair) {
 
     bst.event.on(
       "bst.change." + pair.input,
       function (event) {
 
-        checkField(event, pair);
+        // 不一致一覧を初期化
+        mismatchFields = [];
+
+        // 全フィールドを再照合
+        fieldPairs.forEach(function (targetPair) {
+          checkField(event, targetPair);
+        });
+
+        // 不一致一覧を表示
+        console.log(
+          "不一致フィールド：",
+          mismatchFields
+        );
 
         return event;
       }

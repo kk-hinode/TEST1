@@ -224,13 +224,28 @@
 
     return event;
   });
-  // ルックアップ時のイベント確認用
-  bst.event.on("bst.change", function (event) {
-    console.log("bst.change イベントを検知しました");
-    console.log(event);
+  // ルックアップフィールドの変更イベント確認
+  bst.event.on(
+    "bst.change.伝票番号照合",
+    function (event) {
 
-    return event;
-  });
+      console.log("伝票番号照合の変更イベントを検知しました");
+
+      console.log("イベント情報：", event);
+
+      console.log(
+        "伝票番号照合の値：",
+        event.record["伝票番号照合"].value
+      );
+
+      console.log(
+        "商品コード照合1の値：",
+        event.record["商品コード照合1"].value
+      );
+
+      return event;
+    }
+  );
 })();
 
 

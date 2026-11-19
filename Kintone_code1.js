@@ -224,23 +224,29 @@
 
     return event;
   });
-  // ルックアップフィールドの変更イベント確認
+  // ルックアップ変更後の照合処理
   bst.event.on(
     "bst.change.伝票番号照合",
     function (event) {
 
-      console.log("伝票番号照合の変更イベントを検知しました");
+      console.log("ルックアップ変更イベントを検知しました");
 
-      console.log("イベント情報：", event);
+      // 全24組を再照合
+      mismatchFields = collectMismatches(event.record);
 
+      // 全入力欄の背景色を更新
+      fieldPairs.forEach(function (pair) {
+        updateFieldAppearance(event, pair);
+      });
+
+      // エラー表示フィールドを更新
+      event.record["照合エラー表示"].value =
+        createErrorMessage(mismatchFields);
+
+      // コンソール確認
       console.log(
-        "伝票番号照合の値：",
-        event.record["伝票番号照合"].value
-      );
-
-      console.log(
-        "商品コード照合1の値：",
-        event.record["商品コード照合1"].value
+        "ルックアップ後の不一致フィールド：",
+        mismatchFields
       );
 
       return event;

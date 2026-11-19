@@ -167,6 +167,11 @@
     // 送信時点の値を使って全組を再照合
     mismatchFields = collectMismatches(event.record);
 
+    // 全入力欄の背景色を最新の照合結果に更新
+    fieldPairs.forEach(function (pair) {
+      updateFieldAppearance(event, pair);
+    });
+
     console.log(
       "送信時の不一致フィールド：",
       mismatchFields

@@ -73,7 +73,6 @@
 
   // ⑤ 入力欄の背景色を更新する関数
   function updateFieldAppearance(event, pair) {
-
     var inputValue = normalizeValue(
       event.record[pair.input].value
     );
@@ -86,8 +85,9 @@
       '[field-id="' + pair.input + '"]'
     );
 
+    // inputまたはtextareaを取得
     var input = field
-      ? field.querySelector("input")
+      ? field.querySelector("input, textarea")
       : null;
 
     if (!input) {
@@ -99,18 +99,14 @@
       checkValue === "" ||
       inputValue === checkValue
     ) {
-
       input.style.removeProperty("background-color");
-
     } else {
-
       // 不一致なら赤色表示
       input.style.setProperty(
         "background-color",
         "#ffcccc",
         "important"
       );
-
     }
   }
 

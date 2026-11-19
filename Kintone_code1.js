@@ -224,7 +224,13 @@
 
     return event;
   });
+  // ルックアップ時のイベント確認用
+  bst.event.on("bst.change", function (event) {
+    console.log("bst.change イベントを検知しました");
+    console.log(event);
 
+    return event;
+  });
 })();
 
 

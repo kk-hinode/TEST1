@@ -3,20 +3,31 @@
   "use strict";
 
   // ① 照合するフィールドの組み合わせ
-  var fieldPairs = [
-    {
-      input: "商品コード1",
-      check: "商品コード照合1"
-    },
-    {
-      input: "商品コード2",
-      check: "商品コード照合2"
-    },
-    {
-      input: "商品コード3",
-      check: "商品コード照合3"
-    }
+
+  // 照合対象の項目名
+  var fieldTypes = [
+    "商品コード",
+    "賞味期限",
+    "個数",
+    "受注数量"
   ];
+
+  // 照合するフィールドの組み合わせを格納する配列
+  var fieldPairs = [];
+
+  // 各項目について1～6までの組み合わせを作成
+  fieldTypes.forEach(function (fieldType) {
+
+    for (var i = 1; i <= 6; i++) {
+
+      fieldPairs.push({
+        input: fieldType + i,
+        check: fieldType + "照合" + i
+      });
+
+    }
+
+  });
 
 
   // ② 不一致フィールドを格納する配列

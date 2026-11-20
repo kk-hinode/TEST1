@@ -24,6 +24,12 @@
   // 照合エラー表示フィールドのフィールドコード
   var errorFieldCode = "照合エラー表示";
 
+  // 伝票番号の照合対象
+  var slipNumberPair = {
+    input: "伝票番号_送り状印字_入力",
+    check: "伝票番号照合"
+  };
+
 
   // ==================================================
   // ② 照合するフィールドの組み合わせを作成
@@ -69,6 +75,10 @@
 
     var mismatches = [];
 
+    // ----------------------------------------------
+    // 既存の30組を照合
+    // ----------------------------------------------
+
     fieldPairs.forEach(function (pair) {
 
       var inputValue = normalizeValue(
@@ -79,17 +89,36 @@
         record[pair.check].value
       );
 
-    // 入力欄・照合欄の両方が空欄なら対象外
-    if (inputValue === "" && checkValue === "") {
-      return;
-    }
+      // 入力欄・照合欄の両方が空欄なら対象外
+      if (inputValue === "" && checkValue === "") {
+        return;
+      }
 
-  // 入力欄と照合欄が異なる場合
-  if (inputValue !== checkValue) {
-    mismatches.push(pair.input);
-  }
+      // 入力欄と照合欄が異なる場合
+      if (inputValue !== checkValue) {
+        mismatches.push(pair.input);
+      }
 
     });
+
+
+    // ----------------------------------------------
+    // 伝票番号を照合
+    // ----------------------------------------------
+
+    var slipInputValue = normalizeValue(
+      record[slipNumberPair.input].value
+    );
+
+    var slipCheckValue = normalizeValue(
+      record[slipNumberPair.check].value
+    );
+
+    // 入力欄と照合欄が異なる場合
+    if (slipInputValue !== slipCheckValue) {
+      mismatches.push(slipNumberPair.input);
+    }
+
 
     return mismatches;
 
@@ -170,13 +199,16 @@
 
   function updateComparison(event) {
 
-    // 全24組を照合
+    // 全31組を照合
     mismatchFields = collectMismatches(event.record);
 
-    // 全入力欄の背景色を更新
+    // 既存の30組の背景色を更新
     fieldPairs.forEach(function (pair) {
       updateFieldAppearance(event, pair);
     });
+
+    // 伝票番号の背景色を更新
+    updateFieldAppearance(event, slipNumberPair);
 
     // エラー表示フィールドを更新
     event.record[errorFieldCode].value =
@@ -186,7 +218,7 @@
 
 
   // ==================================================
-  // ⑨ 入力欄の変更イベント
+  // ⑨ 既存の入力欄の変更イベント
   // ==================================================
 
   fieldPairs.forEach(function (pair) {
@@ -207,7 +239,24 @@
 
 
   // ==================================================
-  // ⑩ ルックアップの変更イベント
+  // ⑩ 伝票番号入力欄の変更イベント
+  // ==================================================
+
+  bst.event.on(
+    "bst.change." + slipNumberPair.input,
+    function (event) {
+
+      // 照合結果を画面に反映
+      updateComparison(event);
+
+      return event;
+
+    }
+  );
+
+
+  // ==================================================
+  // ⑪ ルックアップの変更イベント
   // ==================================================
 
   bst.event.on(
@@ -224,20 +273,23 @@
 
 
   // ==================================================
-  // ⑪ 新規レコードの保存実行前イベント
+  // ⑫ 新規レコードの保存実行前イベント
   // ==================================================
 
   bst.event.on(
     "bst.create.submit",
     function (event) {
 
-      // 送信時点の最新の値で全24組を再照合
+      // 送信時点の最新の値で全31組を再照合
       mismatchFields = collectMismatches(event.record);
 
-      // 全入力欄の背景色を更新
+      // 既存の30組の背景色を更新
       fieldPairs.forEach(function (pair) {
         updateFieldAppearance(event, pair);
       });
+
+      // 伝票番号の背景色を更新
+      updateFieldAppearance(event, slipNumberPair);
 
 
       // ----------------------------------------------

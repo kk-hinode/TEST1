@@ -89,11 +89,6 @@
     mismatches.push(pair.input);
   }
 
-      // 入力欄と照合欄が異なる場合
-      if (inputValue !== checkValue) {
-        mismatches.push(pair.input);
-      }
-
     });
 
     return mismatches;

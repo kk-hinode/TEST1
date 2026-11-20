@@ -79,10 +79,15 @@
         record[pair.check].value
       );
 
-      // 照合欄が空欄なら対象外
-      if (checkValue === "") {
-        return;
-      }
+    // 入力欄・照合欄の両方が空欄なら対象外
+    if (inputValue === "" && checkValue === "") {
+      return;
+    }
+
+  // 入力欄と照合欄が異なる場合
+  if (inputValue !== checkValue) {
+    mismatches.push(pair.input);
+  }
 
       // 入力欄と照合欄が異なる場合
       if (inputValue !== checkValue) {
@@ -124,11 +129,8 @@
       return;
     }
 
-    // 照合欄が空欄、または一致している場合
-    if (
-      checkValue === "" ||
-      inputValue === checkValue
-    ) {
+    // 入力欄と照合欄が一致している場合
+    if (inputValue === checkValue) {
 
       // 背景色を元に戻す
       input.style.removeProperty("background-color");

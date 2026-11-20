@@ -30,6 +30,13 @@
     check: "伝票番号照合"
   };
 
+  // 条件付き必須チェックの設定
+  var requiredFieldCondition = {
+    conditionField: "チェック担当者",
+    conditionValue: "その他",
+    requiredField: "チェック担当者_その他"
+  };
+
 
   // ==================================================
   // ② 照合するフィールドの組み合わせを作成
@@ -120,6 +127,28 @@
     }
 
 
+    // ----------------------------------------------
+    // チェック担当者の条件付き必須チェック
+    // ----------------------------------------------
+
+    var conditionValue = normalizeValue(
+      record[requiredFieldCondition.conditionField].value
+    );
+
+    var requiredValue = normalizeValue(
+      record[requiredFieldCondition.requiredField].value
+    );
+
+    // チェック担当者が「その他」で、
+    // その他入力欄が空欄の場合
+    if (
+      conditionValue === requiredFieldCondition.conditionValue &&
+      requiredValue === ""
+    ) {
+      mismatches.push(requiredFieldCondition.requiredField);
+    }
+
+
     return mismatches;
 
   }
@@ -174,7 +203,58 @@
 
 
   // ==================================================
-  // ⑦ エラー表示用の文章を作成する関数
+  // ⑦ 条件付き必須フィールドの背景色を更新する関数
+  // ==================================================
+
+  function updateRequiredFieldAppearance(event) {
+
+    var conditionValue = normalizeValue(
+      event.record[requiredFieldCondition.conditionField].value
+    );
+
+    var requiredValue = normalizeValue(
+      event.record[requiredFieldCondition.requiredField].value
+    );
+
+    // 対象フィールドを取得
+    var field = event.container.querySelector(
+      '[field-id="' + requiredFieldCondition.requiredField + '"]'
+    );
+
+    // inputまたはtextareaを取得
+    var input = field
+      ? field.querySelector("input, textarea")
+      : null;
+
+    if (!input) {
+      return;
+    }
+
+    // 「その他」以外、または必須入力欄に値がある場合
+    if (
+      conditionValue !== requiredFieldCondition.conditionValue ||
+      requiredValue !== ""
+    ) {
+
+      // 背景色を元に戻す
+      input.style.removeProperty("background-color");
+
+    } else {
+
+      // 必須入力欄が空欄の場合は赤色
+      input.style.setProperty(
+        "background-color",
+        "#ffcccc",
+        "important"
+      );
+
+    }
+
+  }
+
+
+  // ==================================================
+  // ⑧ エラー表示用の文章を作成する関数
   // ==================================================
 
   function createErrorMessage(mismatches) {
@@ -194,12 +274,12 @@
 
 
   // ==================================================
-  // ⑧ 照合結果を画面に反映する関数
+  // ⑨ 照合結果を画面に反映する関数
   // ==================================================
 
   function updateComparison(event) {
 
-    // 全31組を照合
+    // 全照合対象を確認
     mismatchFields = collectMismatches(event.record);
 
     // 既存の30組の背景色を更新
@@ -210,6 +290,9 @@
     // 伝票番号の背景色を更新
     updateFieldAppearance(event, slipNumberPair);
 
+    // 条件付き必須フィールドの背景色を更新
+    updateRequiredFieldAppearance(event);
+
     // エラー表示フィールドを更新
     event.record[errorFieldCode].value =
       createErrorMessage(mismatchFields);
@@ -218,7 +301,7 @@
 
 
   // ==================================================
-  // ⑨ 既存の入力欄の変更イベント
+  // ⑩ 既存の入力欄の変更イベント
   // ==================================================
 
   fieldPairs.forEach(function (pair) {
@@ -239,7 +322,7 @@
 
 
   // ==================================================
-  // ⑩ 伝票番号入力欄の変更イベント
+  // ⑪ 伝票番号入力欄の変更イベント
   // ==================================================
 
   bst.event.on(
@@ -256,7 +339,31 @@
 
 
   // ==================================================
-  // ⑪ ルックアップの変更イベント
+  // ⑫ 条件付き必須チェックの変更イベント
+  // ==================================================
+
+  [
+    requiredFieldCondition.conditionField,
+    requiredFieldCondition.requiredField
+  ].forEach(function (fieldCode) {
+
+    bst.event.on(
+      "bst.change." + fieldCode,
+      function (event) {
+
+        // 照合結果を画面に反映
+        updateComparison(event);
+
+        return event;
+
+      }
+    );
+
+  });
+
+
+  // ==================================================
+  // ⑬ ルックアップの変更イベント
   // ==================================================
 
   bst.event.on(
@@ -273,14 +380,14 @@
 
 
   // ==================================================
-  // ⑫ 新規レコードの保存実行前イベント
+  // ⑭ 新規レコードの保存実行前イベント
   // ==================================================
 
   bst.event.on(
     "bst.create.submit",
     function (event) {
 
-      // 送信時点の最新の値で全31組を再照合
+      // 送信時点の最新の値で全項目を再照合
       mismatchFields = collectMismatches(event.record);
 
       // 既存の30組の背景色を更新
@@ -290,6 +397,9 @@
 
       // 伝票番号の背景色を更新
       updateFieldAppearance(event, slipNumberPair);
+
+      // 条件付き必須フィールドの背景色を更新
+      updateRequiredFieldAppearance(event);
 
 
       // ----------------------------------------------
